@@ -1,0 +1,105 @@
+﻿<Window x:Class="FSMapClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013"
+        xmlns:local="clr-namespace:FSMapClient"
+        mc:Ignorable="d"
+        xmlns:properties="clr-namespace:FSMapClient.Properties"
+        Title="Flight Sim OnMap"  Icon="pack://siteoforigin:,,,/Resources/MapInfoIcon.ico" SizeChanged="Window_SizeChanged" Closing="Window_Closing">
+    <DockPanel>
+        <Menu x:Name="menu"  DockPanel.Dock="Top" FontSize="16">
+            <Menu.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <DockPanel HorizontalAlignment="Stretch" />
+                </ItemsPanelTemplate>
+            </Menu.ItemsPanel>
+            <MenuItem Header="Connection">
+                <MenuItem x:Name="mnuConnectStat" Header="Connect" Click="mnuConnect_Click"/>
+            </MenuItem>
+            <MenuItem Header="Settings">
+                <MenuItem Header="Connection Settings">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Margin="0 10 0 5">IP Address:</Label>
+                        <TextBox Grid.Column="1" Width="150" Margin="0 10 0 5" x:Name="mnuIPAdr" Text="{Binding Path=serverIPAddress}"></TextBox>
+                        <Label Grid.Row="1" Margin="0 5 0 5">Port Number:</Label>
+                        <TextBox Grid.Column="1" Grid.Row="1" Margin="0 5 0 5" x:Name="mnuPortNum" Text="{Binding Path=serverPort}"></TextBox>
+                        <Button Grid.Row="2" Margin="0 5 0 10" Grid.ColumnSpan="2" Width="70" x:Name="mnuSetPortIP" Click="mnuSetPortIP_Click">Set</Button>
+                    </Grid>
+                </MenuItem>
+                <MenuItem Header="Map Settings">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Margin="0 10 0 5">Map type:</Label>
+                        <ComboBox Margin="0 10 0 5" Grid.Column="1" Width="150" x:Name="cmbMapType" SelectionChanged="cmbMapType_SelectionChanged">
+                            <ComboBoxItem Tag="http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer">Street Map</ComboBoxItem>
+                            <ComboBoxItem Tag="http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer">Topography</ComboBoxItem>
+                            <ComboBoxItem Selector.IsSelected="true" Tag="http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer">Imagery</ComboBoxItem>
+                            <ComboBoxItem Tag="http://services.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer">USA Topography</ComboBoxItem>
+                            <ComboBoxItem Tag="http://services.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer">NatGeo</ComboBoxItem>
+                        </ComboBox>
+                        <CheckBox Grid.Row="1" x:Name="mnuUseLabels" Grid.ColumnSpan="2" Margin="0 5 0 5" Checked="mnuUseLabels_Checked" Unchecked="mnuUseLabels_Unchecked">Show Lables (best used with Imagery)</CheckBox>
+                        <Label Grid.Row="2" Margin="0 5 0 5">User plane:</Label>
+                        <ComboBox Grid.Row="2"  Grid.Column="2" Margin="0 5 0 5" x:Name="cmbUserPlane" SelectionChanged="cmbUserPlane_SelectionChanged">
+                            <ComboBoxItem Tag="Images/plane1_100.png">
+                                <Image Height="30" Width="30" Source="Images/plane1_100.png"/>
+                            </ComboBoxItem>
+                            <ComboBoxItem Tag="Images/plane2_100.png">
+                                <Image Height="30" Width="30" Source="Images/plane2_100.png"/>
+                            </ComboBoxItem>
+                            <ComboBoxItem Tag="Images/plane3_100.png">
+                                <Image Height="30" Width="30" Source="Images/plane3_100.png"/>
+                            </ComboBoxItem>
+                            <ComboBoxItem Tag="Images/plane4_100.png">
+                                <Image Height="30" Width="30" Source="Images/plane4_100.png"/>
+                            </ComboBoxItem>
+                            <ComboBoxItem Tag="Images/plane5_100.png">
+                                <Image Height="30" Width="30" Source="Images/plane5_100.png"/>
+                            </ComboBoxItem>
+                            <ComboBoxItem Tag="Images/arrow.png" IsSelected="True">
+                                <Image Height="30" Width="30" Source="Images/arrow.png"/>
+                            </ComboBoxItem>
+                        </ComboBox>
+                        <CheckBox Grid.Row="3" x:Name="mnuShowPlanePath" Grid.ColumnSpan="2" Margin="0 5 0 5" IsChecked="True" Checked="mnuShowPlanePath_Checked" Unchecked="mnuShowPlanePath_Unchecked">Show Plane Path</CheckBox>
+                        <CheckBox Grid.Row="4" x:Name="mnuShowFlightPlan" Grid.ColumnSpan="2" Margin="0 5 0 5" IsChecked="True" Checked="mnuShowFlightPlan_Checked" Unchecked="mnuShowFlightPlan_Unchecked">Show Flight Plan</CheckBox>
+                        <CheckBox Grid.Row="5" x:Name="mnuFollowPlane" Grid.ColumnSpan="2" Margin="0 5 0 5" IsChecked="True" Checked="mnuFollowPlane_Checked" Unchecked="mnuFollowPlane_Unchecked">Follow Plane</CheckBox>
+                        <!--Button Grid.Row="4" x:Name="mnuResetPath" Grid.ColumnSpan="2" Width="150" Margin="0 5 0 10" Click="mnuResetPath_Click">Reset Follow Plane Path</-->
+                    </Grid>
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="_Exit" Click="mnuFileExit_Click"/>
+            </MenuItem>
+            <!--MenuItem x:Name="AddMarker" Header="Add Marker" Click="AddMarker_Click"  /-->
+            <MenuItem x:Name="mnuAbout" Header="About" HorizontalAlignment="Right" Click="mnuAbout_Click"/>
+        </Menu>
+        <Grid>
+            <esri:MapView x:Name="MyMapView">
+                <esri:Map x:Name="MyMap">
+                    <esri:ArcGISTiledMapServiceLayer ID="BaseMap" ServiceUri="http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"/>
+                    <esri:GraphicsLayer ID="UserAirplaneCoord" />
+                </esri:Map>
+            </esri:MapView>
+        </Grid>
+    </DockPanel>
+</Window>
